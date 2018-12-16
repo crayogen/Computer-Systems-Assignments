@@ -1,0 +1,52 @@
+# Hajira Zaman
+# 211000057
+
+	.pos 0
+init:
+	irmovq Stack, %rsp
+	irmovq Stack, %rbp
+	call Main
+	halt
+
+# Sample linked list
+.align 8
+# Source block
+src:
+	.quad 0x00a
+	.quad 0x0b0
+	.quad 0xc00
+# Destination block
+dest:
+	.quad 0x111
+	.quad 0x222
+	.quad 0x333
+
+copy_block:
+	irmovq 0, %rax
+	irmovq -1, %r13
+	irmovq 8, %r8
+	While:
+		andq %r9, %r9
+		je End
+		mrmovq (%rdi), %r10 #src, %r10 is val
+		addq %r8, %rdi
+		rmmovq %r10, (%rsi) #dest
+		addq %r8, %rsi
+		xorq %r10, %rax
+		addq %r13, %r9
+		jmp While
+
+	End:
+		ret
+
+Main:
+	pushq %rbp
+	irmovq src, %rdi
+	irmovq dest, %rsi
+	irmovq 3, %r9
+	call copy_block
+	popq %rbp
+	ret
+
+	.pos 0x2000
+Stack:

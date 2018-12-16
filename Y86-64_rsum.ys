@@ -1,0 +1,50 @@
+# Hajira Zaman
+# 211000057
+
+	.pos 0
+init:
+	irmovq Stack, %rsp
+	irmovq Stack, %rbp
+	call Main
+	halt
+
+# Sample linked list
+.align 8
+LinkedList:
+	ele1:
+		.quad 0x00a
+		.quad ele2
+	ele2:
+		.quad 0x0b0
+		.quad ele3
+	ele3:
+		.quad 0xc00
+		.quad 0
+
+rsum_list:
+	rrmovq %rsp, %rbp
+	andq %rdi, %rdi
+	je Ret
+	mrmovq (%rdi), %rsi #val
+	mrmovq 8(%rdi), %rdi # ls = ls->next-ptr
+	addq %rsi, %rax
+	pushq %rax
+	call rsum_list
+	popq %rax
+	rrmovq %rbp, %rsp
+	ret
+
+	Ret:
+		irmovq 0, %rax
+		rrmovq %rbp, %rsp
+		ret
+	
+Main:
+	pushq %rbp
+	irmovq LinkedList, %rdi
+	call rsum_list
+	popq %rbp
+	ret
+
+	.pos 0x200
+Stack:
